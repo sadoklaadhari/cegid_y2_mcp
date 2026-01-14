@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # MCP Server
+  mcp-server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    environment:
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - CEGID_API_KEY=${CEGID_API_KEY}
+      - CEGID_CLIENT_ID=${CEGID_CLIENT_ID}
+      - CEGID_CLIENT_SECRET=${CEGID_CLIENT_SECRET}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DEFAULT_API_KEY=${DEFAULT_API_KEY}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    networks:
+      - cegid-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - cegid-network
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+  # PostgreSQL Database (optional)
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=cegid_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=cegid_y2
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - cegid-network
+    restart: unless-stopped
+
+networks:
+  cegid-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  postgres-data:
