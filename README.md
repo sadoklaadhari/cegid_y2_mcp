@@ -494,9 +494,7 @@ MIT License - See LICENSE file for details
 
 ## 🆘 Support
 
-- Documentation: See README.md and inline code comments
-- Issues: Create GitHub issue with detailed description
-- Email: support@timsoft.com
+ Email: 
 
 ## 🚀 Next Steps
 
