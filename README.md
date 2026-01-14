@@ -2,8 +2,8 @@
 
 **Model Context Protocol Server for Cegid Y2 ERP Integration**
 
-Version: 1.0.0  
-Author: TIMSOFT Société  
+Version: 1.0.0
+Author:
 License: MIT
 
 ## 📋 Overview
